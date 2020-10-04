@@ -1,0 +1,7 @@
+<h1>Todos</h1>
+<a href="/">add todo</a>
+<ul>
+  <% for (todo of todos) { %>
+  <li><%=todo.id + ':' + todo.todo %></li>
+  <% } %>
+</ul>
