@@ -7,7 +7,7 @@ const app = express();
 const port = 3000;
 
 const todo_controller = require('./controllers/todo_controller');
-
+const user_controller = require('./controllers/user.controller');
 
 app.set('view engine', 'ejs');
 app.use(session({
@@ -18,6 +18,12 @@ app.use(session({
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(flash());
+app.use((req, res, next) => {
+  res.locals.username = req.session.username;
+  res.locals.errorMessage = req.flash('errorMessage');
+  next();
+})
+
 
 app.post('/todos', (req, res) => {
   todo_controller.newTodo(req, res);
@@ -25,35 +31,22 @@ app.post('/todos', (req, res) => {
 app.get('/todos', (req, res) => {
   todo_controller.getAll(req, res);
 })
-
 app.get('/todos/:id', (req, res) => {
   todo_controller.get(req, res);
 })
 
 app.get('/', (req,res) => {
-  todo_controller.addTodo(req, res);
+  res.render('index');
 })
 
-app.get('/login', (req, res) => {
-  res.render('login',{
-    errorMessage: req.flash('errorMessage')
-  });
-})
-
-app.post('/login', (req, res) => {
-  if (req.body.password === 'abc') {
-    req.session.isLogin = true;
-    res.redirect('/');
-  } else {
-    req.flash('errorMessage', 'Please input the correct password.')
-    res.redirect('/login');
-  }
-})
-
-app.get('/logout', (req, res) => {
-  req.session.isLogin = false;
-  res.redirect('/');
-})
+function redirectBack(req, res) {
+  res.redirect('back');
+}
+app.get('/login', user_controller.login);
+app.post('/login', user_controller.handleLogin, redirectBack)
+app.get('/logout', user_controller.logout)
+app.get('/register', user_controller.register);
+app.post('/register', user_controller.handleRegister, redirectBack);
 
 
 app.listen(port, () => {

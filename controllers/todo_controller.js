@@ -27,9 +27,7 @@ const todoController = {
     });
   },
   addTodo: (req, res) => {
-    res.render('addTodo', {
-      isLogin: req.session.isLogin
-    })
+    res.render('addTodo')
   },
   newTodo: (req, res) => {
     const content = req.body.content;
