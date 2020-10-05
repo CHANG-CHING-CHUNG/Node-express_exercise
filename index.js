@@ -8,6 +8,7 @@ const port = 3000;
 
 const todo_controller = require('./controllers/todo_controller');
 const user_controller = require('./controllers/user.controller');
+const comment_controller = require('./controllers/comment_controller');
 
 app.set('view engine', 'ejs');
 app.use(session({
@@ -48,6 +49,7 @@ app.get('/logout', user_controller.logout)
 app.get('/register', user_controller.register);
 app.post('/register', user_controller.handleRegister, redirectBack);
 
+app.post('/comments', comment_controller.addComment);
 
 app.listen(port, () => {
   db.connect(function(err) {
