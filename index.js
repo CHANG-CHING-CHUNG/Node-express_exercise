@@ -36,9 +36,7 @@ app.get('/todos/:id', (req, res) => {
   todo_controller.get(req, res);
 })
 
-app.get('/', (req,res) => {
-  res.render('index');
-})
+app.get('/', comment_controller.index, redirectBack);
 
 function redirectBack(req, res) {
   res.redirect('back');
@@ -50,6 +48,9 @@ app.get('/register', user_controller.register);
 app.post('/register', user_controller.handleRegister, redirectBack);
 
 app.post('/comments', comment_controller.addComment);
+app.get('/delete_comments/:id', comment_controller.delete);
+app.get('/update_comments/:id', comment_controller.update);
+app.post('/update_comments/:id', comment_controller.handleUpdate);
 
 app.listen(port, () => {
   db.connect(function(err) {
