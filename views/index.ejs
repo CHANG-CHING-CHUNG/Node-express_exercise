@@ -18,9 +18,9 @@
       <% } %> <% comments.forEach((comment) => { %>
       <div class="card" style="width: 18rem; margin-top: 10px">
         <div class="card-body">
-          <h5 class="card-title"><%= comment.nickname %></h5>
+          <h5 class="card-title"><%= comment.User.nickname %></h5>
           <p class="card-text"><%= comment.content %></p>
-          <% if (username === comment.username) { %>
+          <% if (username === comment.User.username) { %>
           <a href="/update_comments/<%= comment.id %>" class="card-link"
             >編輯</a
           >

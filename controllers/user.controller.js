@@ -1,6 +1,7 @@
-const userModel = require('../models/users');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+const db = require('../models');
+const User = db.User;
 
 const userController = {
 
@@ -29,17 +30,18 @@ const userController = {
         req.flash('errorMessage', err.toString());
         return next();
       }
-      userModel.add({
+
+      User.create({
         username,
-        nickname,
-        password: hash
-      }, (err)=> {
-        if (err) {
-          req.flash('errorMessage', err.toString());
-          return next();
-        }
+        password: hash,
+        nickname
+      }).then((user) => {
         req.session.username = username;
+        req.session.userId = user.id;
         res.redirect('/');
+      }).catch((err) => {
+        req.flash('errorMessage', err.toString());
+        return next();
       })
     });
   },
@@ -50,25 +52,29 @@ const userController = {
       req.flash('errorMessage', '該填的沒填')
       return next()
     }
-   
-    userModel.get(username, (err, user) => {
-      if (err) {
-        req.flash('errorMessage', err.toString());
-        return next()
+
+    User.findOne({
+      where: {
+        username
       }
+    }).then((user) => {
       if (user == undefined) {
-         req.flash('errorMessage', '無該使用者');
-         return next()
+        req.flash('errorMessage', '無該使用者');
+        return next()
       }
       bcrypt.compare(password, user.password, function(err, result) {
         if (err || !result) {
-           req.flash('errorMessage', '密碼錯誤!')
-           return next()
+          req.flash('errorMessage', '密碼錯誤!')
+          return next()
         }
 
         req.session.username = user.username;
-        res.redirect('/')
-    });
+        req.session.userId = user.id;
+        res.redirect('/');
+      })
+    }).catch((err) => {
+      req.flash('errorMessage', err.toString());
+      return next()
     })
   }
 };
