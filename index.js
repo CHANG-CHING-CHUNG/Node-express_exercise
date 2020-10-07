@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const flash = require('connect-flash');
 const app = express();
-const port = process.env.POPT || 3000;
+const port = process.env.PORT || 3000;
 
 const user_controller = require('./controllers/user.controller');
 const comment_controller = require('./controllers/comment_controller');
